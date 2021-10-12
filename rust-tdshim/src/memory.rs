@@ -61,7 +61,7 @@ impl<'a> Memory<'a> {
             PhysAddr::new(0),
             VirtAddr::new(0),
             paging::PAGE_SIZE_DEFAULT as u64,
-            self.layout.runtime_payload_base - 0,
+            self.layout.runtime_payload_base, // self.layout.runtime_payload_base - 0
         );
 
         // runtime_payload_base..runtime_payload_end

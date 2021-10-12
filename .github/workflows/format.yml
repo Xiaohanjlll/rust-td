@@ -22,7 +22,7 @@ jobs:
           components: clippy
 
       - name: Run cargo clippy
-        run: cargo clippy -- -A clippy::redundant_field_names -A clippy::zero_ptr -A clippy::identity_op  -D warnings
+        run: cargo clippy -- -A clippy::redundant_field_names -D warnings
 
   rustfmt:
     name: Format
@@ -85,4 +85,4 @@ jobs:
           args: --all -- --check
 
       - name: Run cargo clippy
-        run: cargo clippy -- -A clippy::redundant_field_names -A clippy::zero_ptr -A clippy::identity_op  -D warnings
+        run: cargo clippy -- -A clippy::redundant_field_names -D warnings

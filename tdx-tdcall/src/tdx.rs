@@ -257,7 +257,7 @@ pub fn tdvmcall_mapgpa(paddress: u64, length: usize) {
             length as u64,
             0,
             0,
-            0u64 as *mut u64 as *mut core::ffi::c_void,
+            core::ptr::null_mut(),
         )
     };
     if ret != TDVMCALL_STATUS_SUCCESS {

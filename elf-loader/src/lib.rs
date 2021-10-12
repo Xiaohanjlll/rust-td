@@ -2,7 +2,11 @@
 //
 // SPDX-License-Identifier: BSD-2-Clause-Patent
 
-#![forbid(unsafe_code)]
 #![no_std]
+#![forbid(unsafe_code)]
+
+#[macro_use]
+extern crate scroll;
 
 pub mod elf;
+pub mod elf64;
