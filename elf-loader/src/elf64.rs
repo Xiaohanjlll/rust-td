@@ -635,22 +635,95 @@ impl<'a> Elf<'a> {
 
 #[cfg(test)]
 mod test_elf_loader {
+    use super::*;
 
     #[test]
-    fn test_parse() {
+    fn test_elfheader() {
         let pe_image = &include_bytes!("../../target/target/release/rust-td-payload")[..];
 
         let elf = crate::elf64::Elf::parse(pe_image).unwrap();
+        println!("{:?}\n", elf.header);
 
-        let obj = elf.program_headers().next().unwrap();
-        println!("{:?}\n", obj);
+        let hd = elf.program_headers().next().unwrap();
+        let status = hd.is_executable();
+        assert!(!status);
+
+        let status = hd.is_write();
+        assert!(!status);
+
+        let elf_bin = elf.bytes;
+        for header in elf.program_headers() {
+            println!("header: {:?}\n", header);
+
+            let dyns = Dyns::parse(
+                &elf_bin[header.p_offset as usize..],
+                header.p_filesz as usize,
+            )
+            .unwrap();
+            for d in dyns {
+                println!("{:?}", d);
+            }
+        }
+
+        for relocs in elf.relocations() {
+            for rel in relocs {
+                println!("rel:{:?}", rel);
+            }
+        }
     }
 
     #[test]
-    fn test_dynamic_info() {
-        let pe_image = &include_bytes!("../../target/target/release/rust-td-payload")[..];
-        let elf = crate::elf64::Elf::parse(pe_image).unwrap();
+    fn test_to_str() {
+        let str_slice_16 = [ET_NONE, ET_REL, ET_EXEC, ET_DYN, ET_CORE, ET_NUM];
+        let str_slice_64 = [
+            DT_JMPREL,
+            DT_BIND_NOW,
+            DT_INIT_ARRAY,
+            DT_NUM,
+            DT_LOOS,
+            DT_HIOS,
+            DT_LOPROC,
+            DT_HIPROC,
+            DT_VERSYM,
+            DT_VERDEF,
+            DT_VERDEFNUM,
+            DT_VERNEED,
+            DT_VERNEEDNUM,
+            DT_RELCOUNT,
+        ];
+        let str_slice_32 = [
+            PT_NULL,
+            PT_LOAD,
+            PT_DYNAMIC,
+            PT_INTERP,
+            PT_NOTE,
+            PT_SHLIB,
+            PT_PHDR,
+            PT_TLS,
+            PT_NUM,
+            PT_LOOS,
+            PT_GNU_EH_FRAME,
+            PT_GNU_STACK,
+            PT_GNU_RELRO,
+            PT_SUNWBSS,
+            PT_SUNWSTACK,
+            PT_HIOS,
+            PT_LOPROC,
+            PT_HIPROC,
+            PT_ARM_EXIDX,
+        ];
 
-        elf.relocations().unwrap();
+        for d in str_slice_16.iter() {
+            let str = et_to_str(*d);
+            println!("{:?}", &str);
+        }
+        for d in str_slice_32.iter() {
+            let str = pt_to_str(*d);
+            println!("{:?}", &str);
+        }
+        for d in str_slice_64.iter() {
+            let str = tag_to_str(*d);
+            println!("{:?}", &str);
+        }
     }
 }

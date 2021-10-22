@@ -467,6 +467,9 @@ mod test {
             loaded_buffer.as_mut_slice(),
             |_| (),
         );
-        println!(" 0x:{:x}\n 0x:{:x}\n 0x:{:x}\n",image_entry, image_base, image_size );
+        println!(
+            " 0x:{:x}\n 0x:{:x}\n 0x:{:x}\n",
+            image_entry, image_base, image_size
+        );
     }
 }
